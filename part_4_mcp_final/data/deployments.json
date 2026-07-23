@@ -1,0 +1,30 @@
+[
+  {
+    "service": "payment-service",
+    "version": "v2.14.0",
+    "deployed_at": "2026-07-22T14:15:00Z",
+    "deployed_by": "ci-bot",
+    "change": "Upgraded payment gateway SDK from 3.2.1 to 4.0.0; new SDK default request timeout dropped from 60s to 30s"
+  },
+  {
+    "service": "payment-service",
+    "version": "v2.13.2",
+    "deployed_at": "2026-07-18T09:00:00Z",
+    "deployed_by": "ci-bot",
+    "change": "Fixed currency rounding bug in refund calculation"
+  },
+  {
+    "service": "inventory-service",
+    "version": "v1.8.0",
+    "deployed_at": "2026-07-20T16:30:00Z",
+    "deployed_by": "ci-bot",
+    "change": "Migrated inventory sync job to new message queue"
+  },
+  {
+    "service": "order-service",
+    "version": "v3.1.0",
+    "deployed_at": "2026-07-19T10:00:00Z",
+    "deployed_by": "ci-bot",
+    "change": "Added support for split shipments"
+  }
+]

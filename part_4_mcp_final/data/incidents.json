@@ -1,0 +1,23 @@
+[
+  {
+    "incident_id": "INC-88",
+    "error": "PaymentGatewayTimeoutError",
+    "date": "2026-05-03",
+    "root_cause": "A payment gateway SDK upgrade lowered the default request timeout from 60s to 30s, which was too aggressive during peak traffic and caused legitimate slow-but-successful gateway calls to be aborted.",
+    "resolution": "Rolled back the SDK to the previous version and, when re-upgrading, explicitly set the client timeout to 60s instead of relying on the SDK default."
+  },
+  {
+    "incident_id": "INC-45",
+    "error": "InventorySyncError",
+    "date": "2026-04-11",
+    "root_cause": "A stock migration script skipped SKUs added after the migration started, leaving their inventory records missing.",
+    "resolution": "Re-ran the migration script in reconciliation mode to backfill missing SKU records."
+  },
+  {
+    "incident_id": "INC-12",
+    "error": "OrderValidationError",
+    "date": "2026-03-02",
+    "root_cause": "A new shipping address format was not accepted by the legacy validation regex.",
+    "resolution": "Updated the validation regex to support the new address format."
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "order_id": "ORD-10234",
+    "customer": "Alice Johnson",
+    "status": "failed",
+    "service": "payment-service",
+    "amount": 129.99,
+    "items": ["Wireless Mouse", "USB-C Hub"],
+    "created_at": "2026-07-22T14:32:10Z",
+    "error": "PaymentGatewayTimeoutError"
+  },
+  {
+    "order_id": "ORD-10235",
+    "customer": "Marcus Lee",
+    "status": "completed",
+    "service": "payment-service",
+    "amount": 49.50,
+    "items": ["Phone Case"],
+    "created_at": "2026-07-22T15:01:44Z",
+    "error": null
+  },
+  {
+    "order_id": "ORD-10190",
+    "customer": "Priya Nair",
+    "status": "failed",
+    "service": "inventory-service",
+    "amount": 89.00,
+    "items": ["Mechanical Keyboard"],
+    "created_at": "2026-07-21T09:12:03Z",
+    "error": "InventorySyncError"
+  },
+  {
+    "order_id": "ORD-10201",
+    "customer": "Diego Fernandez",
+    "status": "completed",
+    "service": "order-service",
+    "amount": 15.25,
+    "items": ["USB Cable"],
+    "created_at": "2026-07-21T11:45:30Z",
+    "error": null
+  }
+]
