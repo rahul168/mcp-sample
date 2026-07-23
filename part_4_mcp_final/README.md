@@ -36,8 +36,9 @@ available tools through MCP and decides which ones to call and in what order.
 ```
 part_4_mcp_final/
 ├── server.py           # FastMCP server exposing 4 tools
-├── client.py            # OpenAI Agents SDK client (interactive CLI)
-├── app.py               # Gradio web UI (streams tool calls live)
+├── client.py            # IncidentAssistantClient: async wrapper around the MCP server + Agent
+├── cli.py                # Interactive terminal client (uses client.py)
+├── app.py               # Gradio web UI (streams tool calls live, uses client.py)
 ├── data/
 │   ├── orders.json
 │   ├── deployments.json
@@ -66,7 +67,7 @@ cp part_4_mcp_final/.env.example part_4_mcp_final/.env
 ## Run
 
 ```bash
-uv run python part_4_mcp_final/client.py
+uv run python part_4_mcp_final/cli.py
 ```
 
 Then ask: `Why did order ORD-10234 fail and what should I do?`

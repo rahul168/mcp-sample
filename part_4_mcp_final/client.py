@@ -1,5 +1,3 @@
-import asyncio
-import os
 import sys
 from pathlib import Path
 
@@ -37,41 +35,36 @@ Your report must contain
 Never fabricate information.
 """
 
-def create_mcp_server() -> MCPServerStdio:
-    """Build the (not-yet-connected) MCP server for the incident-assistant tools."""
-    return MCPServerStdio(
-        name="incident-assistant",
-        params={"command": sys.executable, "args": [SERVER_SCRIPT]},
-    )
 
+class IncidentAssistantClient:
+    """Async wrapper around the incident-assistant MCP server and its Agent."""
 
-def create_agent(server: MCPServerStdio, model: str | None = None) -> Agent:
-    """Build the incident-investigator Agent wired to a connected MCP server."""
-    return Agent(
-        name="Incident Assistant",
-        instructions=INSTRUCTIONS,
-        model=model,
-        mcp_servers=[server],
-    )
+    def __init__(self, model: str | None = None):
+        self.model = model
+        self.server = MCPServerStdio(
+            name="incident-assistant",
+            params={"command": sys.executable, "args": [SERVER_SCRIPT]},
+        )
+        self.agent: Agent | None = None
 
+    async def __aenter__(self) -> "IncidentAssistantClient":
+        await self.server.__aenter__()
+        self.agent = Agent(
+            name="Incident Assistant",
+            instructions=INSTRUCTIONS,
+            model=self.model,
+            mcp_servers=[self.server],
+        )
+        return self
 
-async def main():
-    async with create_mcp_server() as server:
-        agent = create_agent(server)
+    async def __aexit__(self, *exc_info):
+        await self.server.__aexit__(*exc_info)
 
-        print("AI Incident Assistant. Ask about an order (e.g. 'Why did order ORD-10234 fail and what should I do?'), or type 'exit' to quit.\n")
-        while True:
-            question = input("> ").strip()
-            if question.lower() in {"exit", "quit"}:
-                break
-            if not question:
-                continue
-            result = await Runner.run(agent, question)
-            print(f"\n{result.final_output}\n")
+    async def ask(self, question: str) -> str:
+        """Run a question to completion and return the final answer text."""
+        result = await Runner.run(self.agent, question)
+        return result.final_output
 
-
-if __name__ == "__main__":
-    if not os.getenv("OPENAI_API_KEY"):
-        print("Set OPENAI_API_KEY in part_4_mcp_final/.env before running (see .env.example).")
-        sys.exit(1)
-    asyncio.run(main())
+    def run_streamed(self, question: str):
+        """Run a question and return a streaming result (see Runner.run_streamed)."""
+        return Runner.run_streamed(self.agent, question)
