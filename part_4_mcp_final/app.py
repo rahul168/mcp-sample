@@ -54,11 +54,12 @@ def _preview(value, limit: int = 300) -> str:
 async def investigate(question: str, history: list[dict]):
     question = (question or "").strip()
     if not question:
-        yield history, gr.update(interactive=True), gr.update(interactive=True)
+        yield history, "", gr.update(interactive=True), gr.update(interactive=True)
         return
 
     history = [{"role": "user", "content": question}]
-    yield history, gr.update(interactive=False), gr.update(interactive=False)
+    logs = ""
+    yield history, logs, gr.update(interactive=False), gr.update(interactive=False)
 
     try:
         async with MCPServerStdio(
@@ -81,35 +82,21 @@ async def investigate(question: str, history: list[dict]):
                 if item.type == "tool_call_item":
                     name = item.raw_item.name
                     args = item.raw_item.arguments
-                    history.append(
-                        {
-                            "role": "assistant",
-                            "content": f"```json\n{args}\n```" if args else "_(no arguments)_",
-                            "metadata": {"title": f"🔧 Calling `{name}`"},
-                        }
-                    )
-                    yield history, gr.update(interactive=False), gr.update(interactive=False)
+                    logs += f"🔧 Calling {name}({args})\n\n"
+                    yield history, logs, gr.update(interactive=False), gr.update(interactive=False)
                 elif item.type == "tool_call_output_item":
-                    history.append(
-                        {
-                            "role": "assistant",
-                            "content": f"```\n{_preview(item.output)}\n```",
-                            "metadata": {"title": "📋 Tool result"},
-                        }
-                    )
-                    yield history, gr.update(interactive=False), gr.update(interactive=False)
+                    logs += f"📋 Result: {_preview(item.output)}\n\n"
+                    yield history, logs, gr.update(interactive=False), gr.update(interactive=False)
                 elif item.type == "message_output_item":
                     text = ItemHelpers.text_message_output(item)
-                    history.append({"role": "assistant", "content": f"### ✅ Root Cause Analysis\n\n{text}"})
-                    yield history, gr.update(interactive=False), gr.update(interactive=False)
+                    history.append({"role": "assistant", "content": text})
+                    yield history, logs, gr.update(interactive=False), gr.update(interactive=False)
     except Exception as exc:
-        history.append(
-            {"role": "assistant", "content": f"### ⚠️ Investigation Failed\n\n{exc}"}
-        )
-        yield history, gr.update(interactive=True), gr.update(interactive=True)
+        history.append({"role": "assistant", "content": f"⚠️ Investigation failed: {exc}"})
+        yield history, logs, gr.update(interactive=True), gr.update(interactive=True)
         return
 
-    yield history, gr.update(interactive=True), gr.update(interactive=True)
+    yield history, logs, gr.update(interactive=True), gr.update(interactive=True)
 
 
 with gr.Blocks(title="AI Incident Assistant") as demo:
@@ -123,7 +110,20 @@ with gr.Blocks(title="AI Incident Assistant") as demo:
             "`part_4_mcp_final/.env` and set your key before investigating."
         )
 
-    chatbot = gr.Chatbot(height=500, label="Investigation", buttons=["copy"])
+    with gr.Row():
+        with gr.Column(scale=3):
+            chatbot = gr.Chatbot(height=500, label="Investigation", buttons=["copy"])
+        with gr.Column(scale=2):
+            logs_box = gr.Textbox(
+                label="🔍 Tool Trace",
+                lines=21,
+                max_lines=21,
+                interactive=False,
+                autoscroll=True,
+                buttons=["copy"],
+                placeholder="Tool calls and their results will appear here as the agent investigates.",
+            )
+
     question_box = gr.Textbox(
         label="Ask about an order",
         placeholder="Why did order ORD-10234 fail and what should I do?",
@@ -132,10 +132,14 @@ with gr.Blocks(title="AI Incident Assistant") as demo:
     gr.Examples(examples=EXAMPLES, inputs=question_box)
 
     question_box.submit(
-        investigate, inputs=[question_box, chatbot], outputs=[chatbot, question_box, submit_btn]
+        investigate,
+        inputs=[question_box, chatbot],
+        outputs=[chatbot, logs_box, question_box, submit_btn],
     )
     submit_btn.click(
-        investigate, inputs=[question_box, chatbot], outputs=[chatbot, question_box, submit_btn]
+        investigate,
+        inputs=[question_box, chatbot],
+        outputs=[chatbot, logs_box, question_box, submit_btn],
     )
 
 
