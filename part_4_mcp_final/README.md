@@ -37,6 +37,7 @@ available tools through MCP and decides which ones to call and in what order.
 part_4_mcp_final/
 ├── server.py           # FastMCP server exposing 4 tools
 ├── client.py            # OpenAI Agents SDK client (interactive CLI)
+├── app.py               # Gradio web UI (streams tool calls live)
 ├── data/
 │   ├── orders.json
 │   ├── deployments.json
@@ -69,3 +70,15 @@ uv run python part_4_mcp_final/client.py
 ```
 
 Then ask: `Why did order ORD-10234 fail and what should I do?`
+
+## Gradio UI
+
+As an alternative to the CLI, a browser-based UI is available that streams each tool call
+live as the agent investigates:
+
+```bash
+uv run python part_4_mcp_final/app.py
+```
+
+Open the printed local URL, then ask a question (or click one of the provided examples).
+Each investigation is independent — no conversation memory is kept between questions.
