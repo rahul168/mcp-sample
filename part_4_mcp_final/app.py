@@ -21,6 +21,28 @@ EXAMPLES = [
     "Why did order ORD-10190 fail and what should I do?",
 ]
 
+THEME = gr.themes.Soft(primary_hue="indigo", secondary_hue="violet")
+
+CUSTOM_CSS = """
+#header-banner {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+#header-banner h1, #header-banner p, #header-banner strong {
+    color: white !important;
+}
+#header-banner p {
+    margin-top: 0.4rem !important;
+    opacity: 0.92;
+}
+#investigate-btn {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    border: none !important;
+}
+"""
+
 
 def _preview(value, limit: int = 300) -> str:
     text = str(value)
@@ -60,20 +82,30 @@ async def investigate(question: str, history: list[dict]):
                     name = item.raw_item.name
                     args = item.raw_item.arguments
                     history.append(
-                        {"role": "assistant", "content": f"🔧 Calling {name}({args})"}
+                        {
+                            "role": "assistant",
+                            "content": f"```json\n{args}\n```" if args else "_(no arguments)_",
+                            "metadata": {"title": f"🔧 Calling `{name}`"},
+                        }
                     )
                     yield history, gr.update(interactive=False), gr.update(interactive=False)
                 elif item.type == "tool_call_output_item":
                     history.append(
-                        {"role": "assistant", "content": f"📋 {_preview(item.output)}"}
+                        {
+                            "role": "assistant",
+                            "content": f"```\n{_preview(item.output)}\n```",
+                            "metadata": {"title": "📋 Tool result"},
+                        }
                     )
                     yield history, gr.update(interactive=False), gr.update(interactive=False)
                 elif item.type == "message_output_item":
                     text = ItemHelpers.text_message_output(item)
-                    history.append({"role": "assistant", "content": text})
+                    history.append({"role": "assistant", "content": f"### ✅ Root Cause Analysis\n\n{text}"})
                     yield history, gr.update(interactive=False), gr.update(interactive=False)
     except Exception as exc:
-        history.append({"role": "assistant", "content": f"⚠️ Investigation failed: {exc}"})
+        history.append(
+            {"role": "assistant", "content": f"### ⚠️ Investigation Failed\n\n{exc}"}
+        )
         yield history, gr.update(interactive=True), gr.update(interactive=True)
         return
 
@@ -81,8 +113,9 @@ async def investigate(question: str, history: list[dict]):
 
 
 with gr.Blocks(title="AI Incident Assistant") as demo:
-    gr.Markdown("# AI Incident Assistant")
-    gr.Markdown(SCENARIO)
+    with gr.Column(elem_id="header-banner"):
+        gr.Markdown("# 🛠️ AI Incident Assistant")
+        gr.Markdown(SCENARIO)
 
     if not os.getenv("OPENAI_API_KEY"):
         gr.Markdown(
@@ -90,12 +123,12 @@ with gr.Blocks(title="AI Incident Assistant") as demo:
             "`part_4_mcp_final/.env` and set your key before investigating."
         )
 
-    chatbot = gr.Chatbot(height=500, label="Investigation")
+    chatbot = gr.Chatbot(height=500, label="Investigation", buttons=["copy"])
     question_box = gr.Textbox(
         label="Ask about an order",
         placeholder="Why did order ORD-10234 fail and what should I do?",
     )
-    submit_btn = gr.Button("Investigate")
+    submit_btn = gr.Button("🔍 Investigate", variant="primary", elem_id="investigate-btn")
     gr.Examples(examples=EXAMPLES, inputs=question_box)
 
     question_box.submit(
@@ -107,4 +140,4 @@ with gr.Blocks(title="AI Incident Assistant") as demo:
 
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(theme=THEME, css=CUSTOM_CSS)
