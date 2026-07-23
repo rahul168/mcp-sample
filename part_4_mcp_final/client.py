@@ -21,8 +21,9 @@ order failed, investigate methodically using the available tools:
    failure.
 3. Call latest_deployment with the order's service to check whether a
    recent deployment could be the cause.
-4. Call similar_incidents with the order's error to check whether this
-   has happened before, and how it was resolved.
+4. Call similar_incidents with the exact error value returned by
+   get_order, verbatim, to check whether this has happened before and how
+   it was resolved.
 
 Then produce a concise root cause analysis: what failed, why (tying it to
 the deployment if relevant), and what the engineer should do next (citing
