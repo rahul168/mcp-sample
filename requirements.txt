@@ -1,0 +1,11 @@
+mcp>=1.0.0
+anthropic>=0.40.0
+openai>=1.68.0
+openai-agents>=0.18.0
+python-dotenv>=1.0.0
+litellm>=1.80.0
+langchain-core>=1.5.0
+langchain-openai>=1.4.0
+ipykernel>=6.29.0
+nbconvert>=7.16.0
+tiktoken>=0.13.0
