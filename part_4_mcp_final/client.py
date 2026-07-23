@@ -13,34 +13,51 @@ load_dotenv(HERE / ".env")
 SERVER_SCRIPT = str(HERE / "server.py")
 
 INSTRUCTIONS = """
-You are a production incident investigator. When an engineer asks why an
-order failed, investigate methodically using the available tools:
+You are an experienced Site Reliability Engineer.
+Your job is to investigate production incidents.
+Always think step by step.
 
-1. Call get_order to find the order's status, service, and error.
-2. Call search_logs with the order_id to see what happened around the
-   failure.
-3. Call latest_deployment with the order's service to check whether a
-   recent deployment could be the cause.
-4. Call similar_incidents with the exact error value returned by
-   get_order, verbatim, to check whether this has happened before and how
-   it was resolved.
+Whenever information is available through MCP tools,
+use those tools instead of guessing.
 
-Then produce a concise root cause analysis: what failed, why (tying it to
-the deployment if relevant), and what the engineer should do next (citing
-the past incident's resolution if one was found).
+For failed orders:
+1. Retrieve order details.
+2. Retrieve application logs.
+3. Check deployment history.
+4. Search historical incidents.
+5. Produce a Root Cause Analysis.
+
+Your report must contain
+• Summary
+• Evidence
+• Root Cause
+• Recommended Actions
+• Confidence Level
+
+Never fabricate information.
 """
+
+def create_mcp_server() -> MCPServerStdio:
+    """Build the (not-yet-connected) MCP server for the incident-assistant tools."""
+    return MCPServerStdio(
+        name="incident-assistant",
+        params={"command": sys.executable, "args": [SERVER_SCRIPT]},
+    )
+
+
+def create_agent(server: MCPServerStdio, model: str | None = None) -> Agent:
+    """Build the incident-investigator Agent wired to a connected MCP server."""
+    return Agent(
+        name="Incident Assistant",
+        instructions=INSTRUCTIONS,
+        model=model,
+        mcp_servers=[server],
+    )
 
 
 async def main():
-    async with MCPServerStdio(
-        name="incident-assistant",
-        params={"command": sys.executable, "args": [SERVER_SCRIPT]},
-    ) as server:
-        agent = Agent(
-            name="Incident Assistant",
-            instructions=INSTRUCTIONS,
-            mcp_servers=[server],
-        )
+    async with create_mcp_server() as server:
+        agent = create_agent(server)
 
         print("AI Incident Assistant. Ask about an order (e.g. 'Why did order ORD-10234 fail and what should I do?'), or type 'exit' to quit.\n")
         while True:

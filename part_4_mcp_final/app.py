@@ -1,11 +1,9 @@
 import os
-import sys
 
 import gradio as gr
-from agents import Agent, ItemHelpers, Runner
-from agents.mcp import MCPServerStdio
+from agents import ItemHelpers, Runner
 
-from client import INSTRUCTIONS, SERVER_SCRIPT
+from client import create_agent, create_mcp_server
 
 MODEL = "gpt-5.4-mini"
 
@@ -62,16 +60,8 @@ async def investigate(question: str, history: list[dict]):
     yield history, logs, gr.update(interactive=False), gr.update(interactive=False)
 
     try:
-        async with MCPServerStdio(
-            name="incident-assistant",
-            params={"command": sys.executable, "args": [SERVER_SCRIPT]},
-        ) as server:
-            agent = Agent(
-                name="Incident Assistant",
-                instructions=INSTRUCTIONS,
-                model=MODEL,
-                mcp_servers=[server],
-            )
+        async with create_mcp_server() as server:
+            agent = create_agent(server, model=MODEL)
 
             result = Runner.run_streamed(agent, question)
             async for event in result.stream_events():
