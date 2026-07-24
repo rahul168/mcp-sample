@@ -58,6 +58,39 @@ calling tools exposed over MCP, with a Gradio web UI. See
 [part_4_mcp_final/README.md](part_4_mcp_final/README.md) for details on
 running it.
 
+## Prerequisites
+
+Install these before you start:
+
+- **Cursor** — the AI code editor used throughout the course. Download from
+  [cursor.com/downloads](https://cursor.com/downloads) and install it for your OS.
+- **uv** — the Python package/environment manager this project uses.
+  ```bash
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
+  (Windows / other install methods: see the
+  [uv install docs](https://docs.astral.sh/uv/getting-started/installation/).)
+  `uv` will automatically fetch the Python version this repo needs (3.12, see
+  `.python-version`) — no separate Python install required.
+- **Node.js** (LTS, 18+) — required to run MCP servers distributed as npm
+  packages and some Cursor/VS Code tooling. Install from
+  [nodejs.org](https://nodejs.org/) or via a version manager like `nvm`.
+
+### Enabling Jupyter notebooks (`.ipynb`) in Cursor
+
+Part 2 of the course uses Jupyter notebooks. Cursor is VS Code-based, so it
+uses the same extension:
+
+1. Install the **Jupyter** extension (`ms-toolsai.jupyter`) from the
+   Extensions panel in Cursor.
+2. Run `uv sync` first (see [Setup](#setup)) so the `.venv` and `ipykernel`
+   exist.
+3. Open any `.ipynb` file in `part_2_concepts/`, then click **Select Kernel**
+   (top-right of the notebook) and choose the interpreter at
+   `.venv/bin/python` in this repo.
+4. Run a cell — Cursor will prompt to install any missing kernel
+   dependencies if needed.
+
 ## Getting Started
 
 Clone the repo to your machine:
