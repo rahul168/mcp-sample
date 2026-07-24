@@ -1,4 +1,4 @@
-# AI, LLMs, Context, Tools & MCP — Course Code
+# Learn MCP — Code Sample
 
 Companion code for a course that builds up from a single LLM API call to a
 full AI assistant powered by the Model Context Protocol (MCP). Each part
