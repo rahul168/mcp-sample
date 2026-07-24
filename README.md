@@ -116,3 +116,7 @@ that part's folder and fill in the values (e.g. `OPENAI_API_KEY`).
 ```bash
 cp part_1_foundation/.env.example part_1_foundation/.env
 ```
+
+## License
+
+[MIT](LICENSE)
