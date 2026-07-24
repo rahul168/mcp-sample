@@ -3,7 +3,7 @@ import os
 import gradio as gr
 from agents import ItemHelpers
 
-from client import IncidentAssistantClient
+from assistant_agent import IncidentAssistantAgent
 
 MODEL = "gpt-5.4-mini"
 
@@ -60,7 +60,7 @@ async def investigate(question: str, history: list[dict]):
     yield history, logs, gr.update(interactive=False), gr.update(interactive=False)
 
     try:
-        async with IncidentAssistantClient(model=MODEL) as client:
+        async with IncidentAssistantAgent(model=MODEL) as client:
             result = client.run_streamed(question)
             async for event in result.stream_events():
                 if event.type != "run_item_stream_event":

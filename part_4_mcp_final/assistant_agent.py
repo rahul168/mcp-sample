@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 HERE = Path(__file__).resolve().parent
 load_dotenv(HERE / ".env")
 
-SERVER_SCRIPT = str(HERE / "server.py")
+SERVER_SCRIPT = str(HERE / "incident_assistant_server.py")
 
 INSTRUCTIONS = """
 You are an experienced Site Reliability Engineer.
@@ -36,7 +36,7 @@ Never fabricate information.
 """
 
 
-class IncidentAssistantClient:
+class IncidentAssistantAgent:
     """Async wrapper around the incident-assistant MCP server and its Agent."""
 
     def __init__(self, model: str | None = None):
@@ -47,7 +47,7 @@ class IncidentAssistantClient:
         )
         self.agent: Agent | None = None
 
-    async def __aenter__(self) -> "IncidentAssistantClient":
+    async def __aenter__(self) -> "IncidentAssistantAgent":
         await self.server.__aenter__()
         self.agent = Agent(
             name="Incident Assistant",
