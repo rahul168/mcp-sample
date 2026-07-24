@@ -35,10 +35,9 @@ available tools through MCP and decides which ones to call and in what order.
 
 ```
 part_4_mcp_final/
-├── server.py           # FastMCP server exposing 4 tools
-├── client.py            # IncidentAssistantClient: async wrapper around the MCP server + Agent
-├── cli.py                # Interactive terminal client (uses client.py)
-├── app.py               # Gradio web UI (streams tool calls live, uses client.py)
+├── incident_assistant_server.py   # FastMCP server exposing 4 tools
+├── assistant_agent.py             # IncidentAssistantAgent: async wrapper around the MCP server + Agent
+├── app.py                         # Gradio web UI (streams tool calls live, uses assistant_agent.py)
 ├── data/
 │   ├── orders.json
 │   ├── deployments.json
@@ -66,20 +65,13 @@ cp part_4_mcp_final/.env.example part_4_mcp_final/.env
 
 ## Run
 
-```bash
-uv run python part_4_mcp_final/cli.py
-```
-
-Then ask: `Why did order ORD-10234 fail and what should I do?`
-
-## Gradio UI
-
-As an alternative to the CLI, a browser-based UI is available that streams each tool call
-live as the agent investigates:
+A browser-based UI streams each tool call live as the agent investigates:
 
 ```bash
 uv run python part_4_mcp_final/app.py
 ```
 
-Open the printed local URL, then ask a question (or click one of the provided examples).
+Open the printed local URL, then ask a question (or click one of the provided examples),
+e.g. `Why did order ORD-10234 fail and what should I do?`
+
 Each investigation is independent — no conversation memory is kept between questions.
