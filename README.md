@@ -54,9 +54,20 @@ uv run python part_3_mcp_demo/mcp_host.py
 
 `part_4_mcp_final/` — everything from parts 1-3 assembled into a real
 application: an agent (OpenAI Agents SDK) that investigates failed orders by
-calling tools exposed over MCP, with both a CLI and a Gradio web UI. See
+calling tools exposed over MCP, with a Gradio web UI. See
 [part_4_mcp_final/README.md](part_4_mcp_final/README.md) for details on
 running it.
+
+## Getting Started
+
+Clone the repo to your machine:
+
+```bash
+git clone https://github.com/rahul168/mcp-sample.git
+cd mcp-sample
+```
+
+Then follow the [Setup](#setup) steps below before running any part of the course.
 
 ## Setup
 
