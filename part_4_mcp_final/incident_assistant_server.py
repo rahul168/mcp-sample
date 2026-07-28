@@ -5,13 +5,14 @@ from mcp.server.fastmcp import FastMCP
 
 server = FastMCP("incident-assistant")
 
+#region Helper Function
 DATA_DIR = Path(__file__).resolve().parent / "data"
-
 
 def _load(filename: str):
     with open(DATA_DIR / filename) as f:
         return json.load(f)
 
+#endregion
 
 @server.tool()
 def get_order(order_id: str) -> dict:

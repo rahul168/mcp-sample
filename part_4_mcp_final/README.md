@@ -36,8 +36,7 @@ available tools through MCP and decides which ones to call and in what order.
 ```
 part_4_mcp_final/
 ├── incident_assistant_server.py   # FastMCP server exposing 4 tools
-├── assistant_agent.py             # IncidentAssistantAgent: async wrapper around the MCP server + Agent
-├── app.py                         # Gradio web UI (streams tool calls live, uses assistant_agent.py)
+├── app.py                         # Gradio web UI: connects to the MCP server and runs the Agent, streaming tool calls live
 ├── data/
 │   ├── orders.json
 │   ├── deployments.json
@@ -46,12 +45,16 @@ part_4_mcp_final/
 └── .env.example
 ```
 
+
+
 ## Tools
 
 - `get_order(order_id)` — order status, service, amount, error
 - `search_logs(order_id)` — log lines for that order
 - `latest_deployment(service)` — most recent deployment for a service
 - `similar_incidents(error)` — past incidents with the same error
+
+
 
 ## Setup
 
@@ -62,6 +65,8 @@ uv sync
 cp part_4_mcp_final/.env.example part_4_mcp_final/.env
 # edit part_4_mcp_final/.env and set OPENAI_API_KEY
 ```
+
+
 
 ## Run
 

@@ -1,12 +1,44 @@
 import os
+import sys
+from pathlib import Path
 
 import gradio as gr
-from agents import ItemHelpers
+from agents import Agent, ItemHelpers, Runner
+from agents.mcp import MCPServerStdio
+from dotenv import load_dotenv
 
-from assistant_agent import IncidentAssistantAgent
+HERE = Path(__file__).resolve().parent
+load_dotenv(HERE / ".env")
 
 MODEL = "gpt-5.4-mini"
+SERVER_SCRIPT = str(HERE / "incident_assistant_server.py")
 
+INSTRUCTIONS = """
+You are an experienced Site Reliability Engineer.
+Your job is to investigate production incidents.
+Always think step by step.
+
+Whenever information is available through MCP tools,
+use those tools instead of guessing.
+
+For failed orders:
+1. Retrieve order details.
+2. Retrieve application logs.
+3. Check deployment history.
+4. Search historical incidents.
+5. Produce a Root Cause Analysis.
+
+Your report must contain
+• Summary
+• Evidence
+• Root Cause
+• Recommended Actions
+• Confidence Level
+
+Never fabricate information.
+"""
+
+#region UI Styling
 SCENARIO = (
     "An engineer asks: **\"Why did order ORD-10234 fail and what should I do?\"** "
     "Instead of manually checking the order DB, logs, deployment history, and past "
@@ -41,13 +73,15 @@ CUSTOM_CSS = """
 }
 """
 
+#endregion
 
+#region Helper functions
 def _preview(value, limit: int = 300) -> str:
     text = str(value)
     if len(text) > limit:
         return text[:limit] + "…"
     return text
-
+#endregion
 
 async def investigate(question: str, history: list[dict]):
     question = (question or "").strip()
@@ -60,17 +94,25 @@ async def investigate(question: str, history: list[dict]):
     yield history, logs, gr.update(interactive=False), gr.update(interactive=False)
 
     try:
-        async with IncidentAssistantAgent(model=MODEL) as client:
-            result = client.run_streamed(question)
+        server = MCPServerStdio(
+            name="incident-assistant",
+            params={"command": sys.executable, "args": [SERVER_SCRIPT]},
+        )
+        async with server:
+            agent = Agent(
+                name="AI Incident Assistant",
+                instructions=INSTRUCTIONS,
+                model=MODEL,
+                mcp_servers=[server],
+            )
+            result = Runner.run_streamed(agent, question)
             async for event in result.stream_events():
                 if event.type != "run_item_stream_event":
                     continue
 
                 item = event.item
-                if item.type == "tool_call_item":
-                    name = item.raw_item.name
-                    args = item.raw_item.arguments
-                    logs += f"🔧 Calling {name}({args})\n\n"
+                if item.type == "tool_call_item":                    
+                    logs += f"🔧 Calling {item.raw_item.name}({item.raw_item.arguments})\n\n"
                     yield history, logs, gr.update(interactive=False), gr.update(interactive=False)
                 elif item.type == "tool_call_output_item":
                     logs += f"📋 Result: {_preview(item.output)}\n\n"
@@ -81,12 +123,11 @@ async def investigate(question: str, history: list[dict]):
                     yield history, logs, gr.update(interactive=False), gr.update(interactive=False)
     except Exception as exc:
         history.append({"role": "assistant", "content": f"⚠️ Investigation failed: {exc}"})
-        yield history, logs, gr.update(interactive=True), gr.update(interactive=True)
-        return
+        yield history, logs, gr.update(interactive=False), gr.update(interactive=False)        
 
     yield history, logs, gr.update(interactive=True), gr.update(interactive=True)
 
-
+#region UI Components
 with gr.Blocks(title="AI Incident Assistant") as demo:
     with gr.Column(elem_id="header-banner"):
         gr.Markdown("# 🛠️ AI Incident Assistant")
@@ -129,7 +170,7 @@ with gr.Blocks(title="AI Incident Assistant") as demo:
         inputs=[question_box, chatbot],
         outputs=[chatbot, logs_box, question_box, submit_btn],
     )
-
+#endregion
 
 if __name__ == "__main__":
     demo.launch(theme=THEME, css=CUSTOM_CSS)

@@ -1,8 +1,16 @@
-# Learn MCP — Code Sample
+# AI Foundation & Model Context Protocol
 
-Companion code for a course that builds up from a single LLM API call to a
+Welcome to this course on MCP: AI Foundation & Model Context Protocol. This course is designed to take you from zero experience on MCP to building real-world AI applications. And learning the foundational skills needed to step into the world of AI.
+
+## Course Structure
+This course is divided in two modules -  
+- Module-1: AI Foundation & Introduction to MCP  
+- Module-2: Hands-On Labs Model Context Protocol  
+
+## How this Repo is organized?  
+This code repo contains the companion code for a course that builds up from a single LLM API call to a
 full AI assistant powered by the Model Context Protocol (MCP). Each part
-builds on the concepts from the last:
+builds on the concepts from the last:  
 
 ```
 mcp-sample/
@@ -14,9 +22,9 @@ mcp-sample/
 │
 ├── pyproject.toml
 └── requirements.txt
-```
+```   
 
-## Part 1 — Foundation
+### Part 1 — Foundation
 
 `part_1_foundation/` — the simplest possible programs that talk to an LLM,
 building up from a raw API call to a reusable request/response helper:
@@ -25,7 +33,7 @@ building up from a raw API call to a reusable request/response helper:
 - **main_v1.py** — the same call via Chat Completions, with a request/response helper.
 - **main_v2.py** — the same call routed through [LiteLLM](https://docs.litellm.ai/) instead of a provider-specific SDK.
 
-## Part 2 — Concepts
+### Part 2 — Concepts
 
 `part_2_concepts/` — Jupyter notebooks covering the ideas that turn a bare
 LLM into something that can act:
@@ -36,7 +44,7 @@ LLM into something that can act:
 - **nb_4_tool_calling.ipynb** — tool/function calling, from plain chat to agents.
 - **nb_5_mcp_calling.ipynb** — the Model Context Protocol, from a plain SDK call to a full LLM + MCP round trip.
 
-## Part 3 — Build an MCP Server
+### Part 3 — Build an MCP Server
 
 `part_3_mcp_demo/` — a minimal, hand-built MCP server, client, and host application:
 
@@ -50,7 +58,7 @@ Run it with:
 uv run python part_3_mcp_demo/mcp_host.py
 ```
 
-## Part 4 — AI Incident Assistant
+### Part 4 — AI Incident Assistant
 
 `part_4_mcp_final/` — everything from parts 1-3 assembled into a real
 application: an agent (OpenAI Agents SDK) that investigates failed orders by
@@ -76,7 +84,7 @@ Install these before you start:
   packages and some Cursor/VS Code tooling. Install from
   [nodejs.org](https://nodejs.org/) or via a version manager like `nvm`.
 
-### Enabling Jupyter notebooks (`.ipynb`) in Cursor
+## Enabling Jupyter notebooks (`.ipynb`) in Cursor
 
 Part 2 of the course uses Jupyter notebooks. Cursor is VS Code-based, so it
 uses the same extension:
@@ -117,6 +125,11 @@ that part's folder and fill in the values (e.g. `OPENAI_API_KEY`).
 cp part_1_foundation/.env.example part_1_foundation/.env
 ```
 
-## License
+## If you are stuck?
+Check the resources folder for helpful resources and troubleshooting guides. I recommend to review FAQ.md first as it is the best place for some quick help and pointers to other resources.
 
-[MIT](LICENSE)
+## Reaching Me
+- I would love to connect on LinkedIn: https://www.linkedin.com/in/link2rahul/  
+- And I encourage you to subscribe to my channel in youtube https://www.youtube.com/@propel8  
+- For any help / suggestions / feedback please do not hesitate to contact me directly through email link2rahul@outlook.com  
+- Your course feedback and rating in Udemy will help spread the news and benefit others 
