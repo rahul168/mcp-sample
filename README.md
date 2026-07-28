@@ -126,7 +126,7 @@ cp part_1_foundation/.env.example part_1_foundation/.env
 ```
 
 ## If you are stuck?
-Check the resources folder for helpful resources and troubleshooting guides. I recommend to review FAQ.md first as it is the best place for some quick help and pointers to other resources.
+Check the [resources](resources/) folder for helpful resources and troubleshooting guides. I recommend to review [FAQ.md](resources/FAQ.md) first as it is the best place for some quick help and pointers to other resources.
 
 ## Reaching Me
 - I would love to connect on LinkedIn: https://www.linkedin.com/in/link2rahul/  
