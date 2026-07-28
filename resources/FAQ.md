@@ -220,7 +220,7 @@ This course builds MCP up in layers:
 Helpful resources:
 
 * MCP Documentation: [https://modelcontextprotocol.io/](https://modelcontextprotocol.io/)
-* MCP Specification: [https://spec.modelcontextprotocol.io/](https://spec.modelcontextprotocol.io/)
+* MCP Specification: [https://modelcontextprotocol.io/specification/latest](https://modelcontextprotocol.io/specification/latest)
 * FastMCP (the Python framework used to build the server in this course): [https://gofastmcp.com/](https://gofastmcp.com/)
 
 ---
